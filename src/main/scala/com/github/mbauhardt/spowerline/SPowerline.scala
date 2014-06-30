@@ -1,48 +1,52 @@
 package com.github.powerline
 
+import java.io.File
 import java.net.InetAddress
+
+
+import com.github.mbauhardt.spowerline.{Powerline, Command, Segment}
+
 import scala.sys.process._
 import java.io.File
 
+object Util {
+  def combineCommands(commands: Seq[Command]): Command = commands.map(c => c).mkString(" && ")
+
+  lazy val source: Command = "source ~/.zshrc"
+
+  def execute(commands: Seq[Command]): String = Process(Seq("zsh", "-c", combineCommands(commands.+:(source)))).!!.replace("\n", "")
+}
+
+object Common {
+  lazy val emptySegment: Segment = Segment("")
+  lazy val lastExitStatusSegment: Segment = Segment("%?")
+  lazy val timeSegment: Segment = Segment("%D{%a %d-%b}%@")
+  lazy val userSegment: Segment = Segment("%n@%M")
+  lazy val pwdSegment: Segment = Segment("%~")
+}
+
+object Git {
+  //  val insideWorkingTree: Command = "git rev-parse --is-inside-work-tree"
+  //  val gitInfo: Command = "git_prompt_info"
+  //  val gitInfoProvidedByOhMyZsh: Segment = () =>
+  //  def branchFunction: Segment = {
+
+  //def isGitRepository: Boolean = Process(Seq("zsh", "-c", Util.combineCommands(Seq(Util.source, insideWorkingTree)).apply())).! == 0
+
+  //    if (isGitRepository) {
+  //      () => Process(Seq("zsh", "-c", Util.combineCommands(Seq(Util.source, gitInfoProvidedByOhMyZsh)).apply())).!!
+  //    } else {
+  //      Common.empty
+  //    }
+  //  }
+}
+
 object SPowerline extends App {
-
-  def source = "source ~/.zshrc"
-
-  def insideWorkingTree = "git rev-parse --is-inside-work-tree"
-
-  def gitInfoProvidedByOhMyZsh = "git_prompt_info"
-
-  def combineProcessArguments(arguments: Seq[String]): String = arguments.mkString(" && ")
-
-  def userFunction: String = System.getProperties().get("user.name").asInstanceOf[String]
-
-  def hostFunction: String = "@" + InetAddress.getLocalHost().getHostName()
-
-  def pwdFunction: String = "pwd".!!.replace("\n", "")
-
-  def branchFunction: String = {
-
-    def isGitRepository: Boolean = Process(Seq("zsh", "-c", combineProcessArguments(Seq(source, insideWorkingTree)))).! == 0
-
-    if (isGitRepository) {
-      Process(Seq("zsh", "-c", combineProcessArguments(Seq(source, gitInfoProvidedByOhMyZsh)))).!!
-    } else {
-      ""
-    }
+  def renderPowerline(powerline: Powerline) = {
+    println("\r\n" + powerline.segments.map(s => s.content).mkString(powerline.segmentSeparator) + "\r\n%% ")
   }
 
-  def render(powerline: Powerline) {
-    println(powerline.segments.map(segment => segment.value).mkString(" > "))
-  }
-
-  val powerline = new Powerline(Seq(new Segment(userFunction), new Segment(hostFunction), new Segment(pwdFunction), new Segment(branchFunction)))
-  render(powerline)
-
+  renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.timeSegment, Common.userSegment, Common.pwdSegment), " > "))
 }
 
-class Powerline(val segments: Seq[Segment])
-
-class Segment(f: => String) {
-  def value: String = f
-}
 
