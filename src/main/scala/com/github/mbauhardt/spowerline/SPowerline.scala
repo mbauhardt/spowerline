@@ -1,13 +1,11 @@
 package com.github.powerline
 
-import java.io.File
-import java.net.InetAddress
 
-
-import com.github.mbauhardt.spowerline.{Powerline, Command, Segment}
+import apple.laf.JRSUIConstants.SegmentLeadingSeparator
+import com.github.mbauhardt.spowerline.{SegmentSeparator, Powerline, Segment, Command}
 
 import scala.sys.process._
-import java.io.File
+
 
 object Util {
   def combineCommands(commands: Seq[Command]): Command = commands.map(c => c).mkString(" && ")
@@ -17,12 +15,14 @@ object Util {
   def execute(commands: Seq[Command]): String = Process(Seq("zsh", "-c", combineCommands(commands.+:(source)))).!!.replace("\n", "")
 }
 
+
 object Common {
+  lazy val segmentSeparatorContent = Util.execute(Seq("echo -e \"\\xE2\\xAE\\x80\""))
   lazy val emptySegment: Segment = Segment("")
-  lazy val lastExitStatusSegment: Segment = Segment("%?")
-  lazy val timeSegment: Segment = Segment("%D{%a %d-%b}%@")
-  lazy val userSegment: Segment = Segment("%n@%M")
-  lazy val pwdSegment: Segment = Segment("%~")
+  lazy val lastExitStatusSegment: Segment = Segment("%?", "black", "green", SegmentSeparator(segmentSeparatorContent, "green", "blue"))
+  lazy val timeSegment: Segment = Segment("%D{%a %d-%b}%@", "black", "blue", SegmentSeparator(segmentSeparatorContent, "blue", "white"))
+  lazy val hostSegment: Segment = Segment("%n@%M", "black", "white", SegmentSeparator(segmentSeparatorContent, "white", "cyan"))
+  lazy val pwdSegment: Segment = Segment("%~", "black", "blue", SegmentSeparator(segmentSeparatorContent, "blue", "black"))
 }
 
 object Git {
@@ -43,10 +43,20 @@ object Git {
 
 object SPowerline extends App {
   def renderPowerline(powerline: Powerline) = {
-    println("\r\n" + powerline.segments.map(s => s.content).mkString(powerline.segmentSeparator) + "\r\n%% ")
+    println("\r\n" + powerline.segments.map(s =>
+      //
+      "%{$bg[" + s.bgColor + "]%}"
+        + "%{$fg[" + s.fgColor + "]%}"
+        + s.content
+        + "%{$reset_color%}"
+        + "%{$bg[" + s.separator.bgColor + "]%}"
+        + "%{$fg[" + s.separator.fgColor + "]%}"
+        + s.separator.content
+        + "%{$reset_color%}")
+      .mkString("") + "\r\n%% ")
   }
 
-  renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.timeSegment, Common.userSegment, Common.pwdSegment), " > "))
+  renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.pwdSegment)))
 }
 
 
