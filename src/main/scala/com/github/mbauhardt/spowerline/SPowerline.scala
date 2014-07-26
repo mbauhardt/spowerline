@@ -36,12 +36,12 @@ object Vcs {
 
 object SPowerline extends App {
 
+  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + segment.content + "%{$reset_color%}";
+
+  def zshString(separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + separator.content + "%{$reset_color%}";
 
   def renderPowerline(powerline: Powerline) = {
-    println("\r\n" + powerline.segments.filter(s => !s.content.isEmpty).map(s =>
-      "%{$bg[" + s.bgColor + "]%}" + "%{$fg_bold[" + s.fgColor + "]%}" + s.content + "%{$reset_color%}"
-        + "%{$bg[" + s.separator.bgColor + "]%}" + "%{$fg[" + s.separator.fgColor + "]%}" + s.separator.content + "%{$reset_color%}")
-      .mkString + "\r\n%% ")
+    println("\r\n" + powerline.segments.map(s => zshString(s) + zshString(s.separator)).mkString + "\r\n%% ")
   }
 
   renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.pwdSegment, Vcs.gitSegment)))
