@@ -42,7 +42,7 @@ object SPowerline extends App {
     segments.foldRight(z) {
       (segment, acc) =>
         val bgColor = acc match {
-          case Nil => "black"
+          case Nil => "default"
           case a :: rest => a._1.bgColor
         }
         val separator: SegmentSeparator = SegmentSeparator(Util.toExecutable(Util.segmentSeparatorContent), segment.bgColor, bgColor)
