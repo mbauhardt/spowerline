@@ -3,35 +3,34 @@ package com.github.powerline
 
 import java.util.Date
 
-import com.github.mbauhardt.spowerline.{SegmentSeparator, Powerline, Segment, Command}
+import com.github.mbauhardt.spowerline._
 
 import scala.sys.process._
 
 
 object Util {
-  def combineCommands(commands: Seq[Command]): Command = commands.map(c => c).mkString(" && ")
+  def combineCommands(cs: Seq[Command]): Command = cs.map(c => c).mkString(" && ")
+
+  def combineExecutables(es: Seq[Executable]): Executable = Executable(es.map(e => e.command).mkString(" && "))
 
   lazy val source: Command = "source ~/.zshrc"
 
   def execute(commands: Seq[Command]): String = Process(Seq("zsh", "-c", combineCommands(commands.+:(source)))).!!.replace("\n", "")
 
-  def toExecutable(command: String): String = "`" + command + "`"
-
-  val segmentSeparatorContent = "echo -e \"\\xE2\\xAE\\x80\""
+  val segmentSeparatorContent: Executable = Executable("echo -e \"\\xE2\\xAE\\x80\"")
 }
 
 
 object Common {
-  val emptySegment: Segment = Segment("")
-  val lastExitStatusSegment: Segment = Segment("%(?..%?)", "red", "blue")
-  val timeSegment: Segment = Segment("%D{%a %d-%b}%@", "black", "blue")
-  val hostSegment: Segment = Segment("%n@%M", "black", "white")
-  val pwdSegment: Segment = Segment("%~", "black", "blue")
+  val lastExitStatusSegment: Segment = Segment(Left("%(?..%?)"), "red", "blue")
+  val timeSegment: Segment = Segment(Left("%D{%a %d-%b}%@"), "black", "blue")
+  val hostSegment: Segment = Segment(Left("%n@%M"), "black", "white")
+  val pwdSegment: Segment = Segment(Left("%~"), "black", "blue")
 }
 
 object Vcs {
   def isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null";
-  val gitSegment: Segment = Segment(Util.toExecutable(Util.combineCommands(Seq(isInsideGitDirectory, "git_prompt_info"))), "black", "green")
+  val gitSegment: Segment = Segment(Right(Executable("git_prompt_info")), "black", "green", Some(Executable(isInsideGitDirectory)))
 }
 
 object SPowerline extends App {
@@ -41,26 +40,41 @@ object SPowerline extends App {
     val z: List[(Segment, SegmentSeparator)] = Nil
     segments.foldRight(z) {
       (segment, acc) =>
-        val bgColor = acc match {
+        val bgColor: String = acc match {
           case Nil => "default"
           case a :: rest => a._1.bgColor
         }
-        val separator: SegmentSeparator = SegmentSeparator(Util.toExecutable(Util.segmentSeparatorContent), segment.bgColor, bgColor)
+        val separator: SegmentSeparator = SegmentSeparator(Right(Util.segmentSeparatorContent), segment.bgColor, bgColor)
         (segment, separator) :: acc
     }
   }
 
+  def renderSegment(s: Segment): String = {
+    val prec = s.precondition.getOrElse(Executable("true"))
+    s.content match {
+      case Left(l) => prec.commanWithBackticks + " " + l
+      case Right(r) => Util.combineExecutables(Seq(prec, r)).commanWithBackticks
+    }
+  }
 
-  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + segment.content + "%{$reset_color%}";
+  def renderSeparator(seg: Segment, sep: SegmentSeparator): String = {
+    val prec = seg.precondition.getOrElse(Executable("true"))
+    sep.content match {
+      case Left(l) => prec.commanWithBackticks + " " + l
+      case Right(r) => Util.combineExecutables(Seq(prec, r)).commanWithBackticks
+    }
+  }
+
+  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}";
 
 
-  def zshString(separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + separator.content + "%{$reset_color%}";
+  def zshString(segment: Segment, separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}";
 
   def renderPowerline(powerline: Powerline) = {
 
     val segmentsWithSeparators = createSeparators(powerline.segments.toList)
 
-    println("\r\n" + segmentsWithSeparators.map(s => zshString(s._1) + zshString(s._2)).mkString + "\r\n%% ")
+    println("\r\n" + segmentsWithSeparators.map(s => zshString(s._1) + zshString(s._1, s._2)).mkString + "\r\n%% ")
   }
 
   renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.pwdSegment, Vcs.gitSegment)))
