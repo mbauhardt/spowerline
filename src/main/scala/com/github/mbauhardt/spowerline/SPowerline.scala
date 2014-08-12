@@ -75,7 +75,7 @@ object SPowerline extends App {
         case None => "echo default"
         case Some(s) => s.precondition match {
           case None => "echo " + s.bgColor
-          case Some(p) => "echo " + s.bgColor
+          case Some(p) => "(" + p.command + " && echo " + s.bgColor + ")" + "||" + "(!" + p.command + " && echo default)"
         }
       }
       Executable(bgColor).commanWithBackticks
