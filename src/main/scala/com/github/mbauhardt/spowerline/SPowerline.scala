@@ -1,8 +1,6 @@
 package com.github.powerline
 
 
-import java.util.Date
-
 import com.github.mbauhardt.spowerline._
 
 import scala.sys.process._
@@ -11,7 +9,9 @@ import scala.sys.process._
 object Util {
   def combineCommands(cs: Seq[Command]): Command = cs.map(c => c).mkString(" && ")
 
-  def combineExecutables(es: Seq[Executable]): Executable = Executable(es.map(e => e.command).mkString(" && "))
+  def and(es: Seq[Executable]): Executable = Executable("{ " + es.map(e => "{ " + e.command + " }").mkString(" && ") + " }")
+
+  def or(es: Seq[Executable]): Executable = Executable("{ " + es.map(e => "{ " + e.command + " }").mkString(" || ") + " }")
 
   lazy val source: Command = "source ~/.zshrc"
 
@@ -29,7 +29,8 @@ object Common {
 }
 
 object Vcs {
-  def isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null";
+  def isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null"
+
   val gitSegment: Segment = Segment(Right(Executable("git_prompt_info")), "black", "green", Some(Executable(isInsideGitDirectory)))
 }
 
@@ -49,26 +50,26 @@ object SPowerline extends App {
     }
   }
 
+  def renderContent(c: Either[String, Executable], precondition: Executable) = {
+    c match {
+      case Left(l) => precondition.commanWithBackticks + " " + l
+      case Right(r) => Util.and(Seq(precondition, r)).commanWithBackticks
+    }
+  }
+
   def renderSegment(s: Segment): String = {
     val prec = s.precondition.getOrElse(Executable("true"))
-    s.content match {
-      case Left(l) => prec.commanWithBackticks + " " + l
-      case Right(r) => Util.combineExecutables(Seq(prec, r)).commanWithBackticks
-    }
+    renderContent(s.content, prec)
   }
 
   def renderSeparator(seg: Segment, sep: SegmentSeparator): String = {
     val prec = seg.precondition.getOrElse(Executable("true"))
-    sep.content match {
-      case Left(l) => prec.commanWithBackticks + " " + l
-      case Right(r) => Util.combineExecutables(Seq(prec, r)).commanWithBackticks
-    }
+    renderContent(sep.content, prec)
   }
 
-  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}";
+  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}"
 
-
-  def zshString(segment: Segment, separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}";
+  def zshString(segment: Segment, separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
 
   def renderPowerline(powerline: Powerline) = {
 
@@ -81,3 +82,4 @@ object SPowerline extends App {
 }
 
 
+//PROMPT="`{ { { false } && { echo '%{$fg[blue]%}hello' } } || { { true } && { echo '%{$fg[red]%}hello' } } }`"
