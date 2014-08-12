@@ -37,16 +37,20 @@ object Vcs {
 object SPowerline extends App {
 
 
-  def createSeparators(segments: List[Segment]): List[(Segment, SegmentSeparator)] = {
-    val z: List[(Segment, SegmentSeparator)] = Nil
+  def segmentWithSeparators(segments: List[Segment]): List[(Segment, SegmentSeparator, Option[Segment])] = {
+    val z: List[(Segment, SegmentSeparator, Option[Segment])] = Nil
     segments.foldRight(z) {
       (segment, acc) =>
         val bgColor: String = acc match {
           case Nil => "default"
           case a :: rest => a._1.bgColor
         }
+        val next: Option[Segment] = acc match {
+          case Nil => None
+          case a :: rest => Some(a._1)
+        }
         val separator: SegmentSeparator = SegmentSeparator(Right(Util.segmentSeparatorContent), segment.bgColor, bgColor)
-        (segment, separator) :: acc
+        (segment, separator, next) :: acc
     }
   }
 
@@ -67,18 +71,19 @@ object SPowerline extends App {
     renderContent(sep.content, prec)
   }
 
-  def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}"
 
-  def zshString(segment: Segment, separator: SegmentSeparator): String = {
+  def zshString(segment: Segment, separator: SegmentSeparator, o: Option[Segment]): String = {
+    val segmentContent = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}"
     val bgColor = Executable("echo " + separator.bgColor).commanWithBackticks
-    "%{$bg[" + bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
+    val separatorContent = "%{$bg[" + bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
+    segmentContent + separatorContent
   }
 
   def renderPowerline(powerline: Powerline) = {
 
-    val segmentsWithSeparators = createSeparators(powerline.segments.toList)
+    val segmentsWithSeparators: List[(Segment, SegmentSeparator, Option[Segment])] = segmentWithSeparators(powerline.segments.toList)
 
-    println("\r\n" + segmentsWithSeparators.map(s => zshString(s._1) + zshString(s._1, s._2)).mkString + "\r\n%% ")
+    println("\r\n" + segmentsWithSeparators.map(s => zshString(s._1, s._2, s._3)).mkString + "\r\n%% ")
   }
 
   renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.pwdSegment, Vcs.gitSegment)))
