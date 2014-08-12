@@ -41,15 +41,11 @@ object SPowerline extends App {
     val z: List[(Segment, SegmentSeparator, Option[Segment])] = Nil
     segments.foldRight(z) {
       (segment, acc) =>
-        val bgColor: String = acc match {
-          case Nil => "default"
-          case a :: rest => a._1.bgColor
-        }
         val next: Option[Segment] = acc match {
           case Nil => None
           case a :: rest => Some(a._1)
         }
-        val separator: SegmentSeparator = SegmentSeparator(Right(Util.segmentSeparatorContent), segment.bgColor, bgColor)
+        val separator: SegmentSeparator = SegmentSeparator(Right(Util.segmentSeparatorContent), segment.bgColor, "default")
         (segment, separator, next) :: acc
     }
   }
@@ -74,7 +70,13 @@ object SPowerline extends App {
 
   def zshString(segment: Segment, separator: SegmentSeparator, o: Option[Segment]): String = {
     val segmentContent = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}"
-    val bgColor = Executable("echo " + separator.bgColor).commanWithBackticks
+    val bgColor = {
+      val bgColor = o match  {
+        case None => "default"
+        case Some(s) => s.bgColor
+      }
+      Executable( "echo " + bgColor).commanWithBackticks
+    }
     val separatorContent = "%{$bg[" + bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
     segmentContent + separatorContent
   }
