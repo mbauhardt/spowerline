@@ -69,7 +69,10 @@ object SPowerline extends App {
 
   def zshString(segment: Segment): String = "%{$bg[" + segment.bgColor + "]%}" + "%{$fg_bold[" + segment.fgColor + "]%}" + renderSegment(segment) + "%{$reset_color%}"
 
-  def zshString(segment: Segment, separator: SegmentSeparator): String = "%{$bg[" + separator.bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
+  def zshString(segment: Segment, separator: SegmentSeparator): String = {
+    val bgColor = Executable("echo " + separator.bgColor).commanWithBackticks
+    "%{$bg[" + bgColor + "]%}" + "%{$fg[" + separator.fgColor + "]%}" + renderSeparator(segment, separator) + "%{$reset_color%}"
+  }
 
   def renderPowerline(powerline: Powerline) = {
 
