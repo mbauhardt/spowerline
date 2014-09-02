@@ -4,12 +4,12 @@ package object spowerline {
 
   case class Powerline(segments: Seq[Segment])
 
-  case class Segment(content: Either[String, Executable], fgColor: String = "black", bgColor: String = "white", precondition: Option[Executable] = None)
+  case class Segment(content: Seq[Either[String, Executable]], fgColor: String = "black", bgColor: String = "white", precondition: Option[Executable] = None)
 
   case class SegmentSeparator(content: Either[String, Executable], fgColor: String = "black", bgColor: String = "white")
 
   case class Executable(command: Command) {
-    def commanWithBackticks = "`" + command + "`"
+    def commanWithBackticks = "$(" + command + ")"
   }
 
   type Command = String
