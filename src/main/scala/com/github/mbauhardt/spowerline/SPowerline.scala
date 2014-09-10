@@ -1,6 +1,9 @@
 package com.github.powerline
 
 
+import java.io.File
+import java.util.Formatter.DateTime
+
 import com.github.mbauhardt.spowerline._
 
 import scala.sys.process._
@@ -30,13 +33,13 @@ object Vcs {
   def isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null"
 
   val gitSegment: Segment = {
-    val gitPrefix = Executable("ZSH_THEME_GIT_PROMPT_PREFIX='\\xe2\\xad\\xa0 '")
+    val gitPrefix = Executable("ZSH_THEME_GIT_PROMPT_PREFIX=$(echo -e \" \\xe2\\xad\\xa0 \")")
     val gitSuffix = Executable("ZSH_THEME_GIT_PROMPT_SUFFIX=''")
-    val gitDirty = Executable("ZSH_THEME_GIT_PROMPT_DIRTY=' \\xe2\\x9c\\x97 '")
+    val gitDirty = Executable("ZSH_THEME_GIT_PROMPT_DIRTY=$(echo -e \" \\xe2\\x9c\\x97 \")")
     val gitClean = Executable("ZSH_THEME_GIT_PROMPT_CLEAN=''")
-    val gitAhead = Executable("ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE=' \\xe2\\x86\\x91 '")
-    val gitBehind = Executable("ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE=' \\xe2\\x86\\x93 '")
-    val gitDiverged = Executable("ZSH_THEME_GIT_PROMPT_DIVERGED_REMOTE=' \\xe2\\x87\\x85 '")
+    val gitAhead = Executable("ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE=$(echo -e \" \\xe2\\x86\\x91 \")")
+    val gitBehind = Executable("ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE=$(echo -e \" \\xe2\\x86\\x93 \")")
+    val gitDiverged = Executable("ZSH_THEME_GIT_PROMPT_DIVERGED_REMOTE=$(echo -e \" \\xe2\\x87\\x85 \")")
     val gitPrompt: Executable = Executable("git_prompt_info")
     val gitRemoteStatus: Executable = Executable("git_remote_status")
     Segment(Seq(Right(Util.and(Seq(gitPrefix, gitSuffix, gitDirty, gitClean, gitPrompt))), Right(Util.and(Seq(gitAhead, gitBehind, gitDiverged, gitRemoteStatus)))), "black", "green", Some(Executable(isInsideGitDirectory)))
@@ -102,7 +105,12 @@ object SPowerline extends App {
 
     val segmentsWithSeparators: List[(Segment, SegmentSeparator, Option[Segment])] = segmentWithSeparators(powerline.segments.toList)
 
-    println("\r\n" + segmentsWithSeparators.map(s => zshString(s._1, s._2, s._3)).mkString + "\r\n%% ")
+    val out = new java.io.FileWriter(System.getProperty("user.home") + "/.oh-my-zsh/custom/themes/spowerline.zsh-theme")
+    out.write("#https://github.com/mbauhardt/spowerline")
+    out.append("\r\n#Generated on " + new java.util.Date()+"")
+    out.append("\r\n#")
+    out.write("\r\nPROMPT=$(echo '\r\n" + segmentsWithSeparators.map(s => zshString(s._1, s._2, s._3)).mkString + "\r\n%% ')")
+    out.close
   }
 
   renderPowerline(Powerline(Seq(Common.lastExitStatusSegment, Common.pwdSegment, Vcs.gitSegment)))
