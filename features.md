@@ -25,12 +25,10 @@ A segment contains several informations like current directory, user name or git
 
 <img src="assets/dirty.png" style="width:250px;height:17px">
 
-*git support - branch os behind*
+*git support - branch is behind*
 
 <img src="assets/behind.png" style="width:250px;height:17px">
 
-*git support - branch os ahead*
+*git support - branch is ahead*
 
 <img src="assets/ahead.png" style="width:250px;height:17px">
-
-  * icon support when branch is ahead/behind/diverged
