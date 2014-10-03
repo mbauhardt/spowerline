@@ -32,3 +32,7 @@ A segment contains several informations like current directory, user name or git
 *git support - branch is ahead*
 
 <img src="assets/ahead.png" style="width:250px;height:17px">
+
+*git support - branch is diverged*
+
+<img src="assets/diverged.png" style="width:250px;height:17px">
