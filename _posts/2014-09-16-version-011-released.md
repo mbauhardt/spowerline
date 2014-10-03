@@ -17,3 +17,4 @@ The powerline in version 0.1.1 contains the following features
   * icon support when local branch is ahead
   * icon support when local branch is behind
   * icon support when local branch is diverge
+
