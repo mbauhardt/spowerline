@@ -11,26 +11,18 @@ import scala.sys.process._
 
 object Util {
   def combineCommands(cs: Seq[Command]): Command = cs.map(c => c).mkString(" && ")
-
   def and(es: Seq[Executable]): Executable = Executable(es.map(e => e.command).mkString(" && "))
-
-  lazy val source: Command = "source ~/.zshrc"
-
-  def execute(commands: Seq[Command]): String = Process(Seq("zsh", "-c", combineCommands(commands.+:(source)))).!!.replace("\n", "")
-
   val segmentSeparatorContent: Executable = Executable("echo -e \"\\xE2\\xAE\\x80\"")
 }
 
 
 object Common {
   val lastExitStatusSegment: Segment = Segment(Seq(Left("%(?..%?)")), "red", "blue")
-  val timeSegment: Segment = Segment(Seq(Left("%D{%a %d-%b}%@")), "black", "blue")
-  val hostSegment: Segment = Segment(Seq(Left("%n@%M")), "black", "white")
   val pwdSegment: Segment = Segment(Seq(Left("%~")), "black", "blue")
 }
 
 object Vcs {
-  def isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null"
+  val isInsideGitDirectory: String = "git rev-parse --is-inside-work-tree &> /dev/null"
 
   val gitSegment: Segment = {
     val gitPrefix = Executable("ZSH_THEME_GIT_PROMPT_PREFIX=$(echo -e \" \\xe2\\xad\\xa0 \")")
