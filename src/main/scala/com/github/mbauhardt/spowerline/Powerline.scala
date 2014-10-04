@@ -7,8 +7,6 @@ trait Powerline {
 
   def isEmpty: Boolean
 
-  def toString(f: PowerlineElement => String): String
-
   def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B
 }
 
@@ -19,18 +17,11 @@ object Nil extends Powerline {
 
   override def isEmpty: Boolean = true
 
-  override def toString(f: (PowerlineElement) => String): String = throw new NoSuchElementException("Empty powerline has no head or tail")
-
   override def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = z
 }
 
 class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) extends Powerline {
   override def isEmpty: Boolean = false
-
-  override def toString(f: (PowerlineElement) => String): String = {
-    if (!tail.isEmpty) f(head) + tail.toString(f)
-    else f(head)
-  }
 
   override def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = {
     var acc = z

@@ -25,7 +25,7 @@ class PowerlineElementSuite extends FunSuite {
 
   test("retrieve element from the powerline element ") {
     val pe: PowerlineElement = new Empty().add("hello")
-    assert(pe.element._1 == "hello")
+    assert(pe.element._1.equals("hello"))
     assert(pe.element._2 == defaultSeparator)
   }
 

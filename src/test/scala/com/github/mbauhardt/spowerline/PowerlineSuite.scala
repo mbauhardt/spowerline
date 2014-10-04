@@ -26,4 +26,12 @@ class PowerlineSuite extends FunSuite {
     assert(new Empty().add("hello").add("world").toPowerline.tail.head.element._1 == "world")
     assert(new Empty().add("hello").add("world").toPowerline.tail.head.element._2 == defaultSeparator)
   }
+
+  test("foldLeft") {
+    val p = new Empty().add("hello").add("world").toPowerline
+    val s = p.foldLeft("") {
+      (acc, pe) => acc + pe.element._1
+    }
+    assert(s.equals("helloworld"))
+  }
 }
