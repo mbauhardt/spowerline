@@ -12,4 +12,4 @@ scalaVersion := "2.11.1"
 
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.6"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
