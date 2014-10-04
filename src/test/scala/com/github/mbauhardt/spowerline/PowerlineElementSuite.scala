@@ -33,9 +33,9 @@ class PowerlineElementSuite extends FunSuite {
     val pe: PowerlineElement = new Empty()
     assert(pe.toPowerline.isEmpty)
   }
+
   test("retrieve a non empty powerline from a non empty powerline element ") {
     val pe: PowerlineElement = new Empty().add("hello world")
     assert(!pe.toPowerline.isEmpty)
   }
-
 }
