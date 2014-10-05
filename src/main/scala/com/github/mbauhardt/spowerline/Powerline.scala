@@ -8,6 +8,10 @@ trait Powerline {
   def isEmpty: Boolean
 
   def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B
+
+  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B
+
+
 }
 
 object Nil extends Powerline {
@@ -18,6 +22,8 @@ object Nil extends Powerline {
   override def isEmpty: Boolean = true
 
   override def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = z
+
+  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = z
 }
 
 class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) extends Powerline {
@@ -32,4 +38,7 @@ class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) extends
     }
     acc
   }
+
+  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = f(tail.foldRight(z)(f), head)
+
 }

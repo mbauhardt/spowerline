@@ -34,4 +34,12 @@ class PowerlineSuite extends FunSuite {
     }
     assert(s.equals("helloworld"))
   }
+
+  test("foldRight") {
+    val p = new Empty().add("hello").add("world").toPowerline
+    val s = p.foldRight("") {
+      (acc, pe) => acc + pe.element._1
+    }
+    assert(s.equals("worldhello"))
+  }
 }
