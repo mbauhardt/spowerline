@@ -11,8 +11,8 @@ trait PowerlineElement {
   def toPowerline: Powerline
 }
 
-class Empty extends PowerlineElement {
-  override def add(seg: Segment): PowerlineElement = new NonEmpty(seg, defaultSeparator, new Empty)
+case class Empty() extends PowerlineElement {
+  override def add(seg: Segment): PowerlineElement = NonEmpty(seg, defaultSeparator, Empty())
 
   override def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
 
@@ -21,12 +21,12 @@ class Empty extends PowerlineElement {
   override def toPowerline: Powerline = Nil
 }
 
-class NonEmpty(segment: Segment, separator: Separator, next: PowerlineElement) extends PowerlineElement {
-  override def add(seg: Segment): PowerlineElement = new NonEmpty(segment, separator, next.add(seg))
+case class NonEmpty(segment: Segment, separator: Separator, next: PowerlineElement) extends PowerlineElement {
+  override def add(seg: Segment): PowerlineElement = NonEmpty(segment, separator, next.add(seg))
 
   override def element: (Segment, Separator) = (segment, separator)
 
   override def isEmpty = false
 
-  override def toPowerline: Powerline = new NonEmptyPowerline(this, next.toPowerline)
+  override def toPowerline: Powerline = NonEmptyPowerline(this, next.toPowerline)
 }
