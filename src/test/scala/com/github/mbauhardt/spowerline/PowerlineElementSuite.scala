@@ -12,7 +12,7 @@ class PowerlineElementSuite extends FunSuite {
   }
 
   test("powerline element is not empty after add") {
-    val pe: PowerlineElement = new Empty().add("hello")
+    val pe: PowerlineElement = new Empty().add(Segment("hello"))
     assert(pe.isEmpty == false)
   }
 
@@ -24,8 +24,8 @@ class PowerlineElementSuite extends FunSuite {
   }
 
   test("retrieve element from the powerline element ") {
-    val pe: PowerlineElement = new Empty().add("hello")
-    assert(pe.element._1.equals("hello"))
+    val pe: PowerlineElement = new Empty().add(Segment("hello"))
+    assert(pe.element._1.equals(Segment("hello")))
     assert(pe.element._2 == defaultSeparator)
   }
 
@@ -35,7 +35,7 @@ class PowerlineElementSuite extends FunSuite {
   }
 
   test("retrieve a non empty powerline from a non empty powerline element ") {
-    val pe: PowerlineElement = new Empty().add("hello world")
+    val pe: PowerlineElement = new Empty().add(Segment("hello world"))
     assert(!pe.toPowerline.isEmpty)
   }
 }

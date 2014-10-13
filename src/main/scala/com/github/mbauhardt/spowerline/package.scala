@@ -1,7 +1,10 @@
 package com.github.mbauhardt
 
 package object spowerline {
-  type Segment = String
-  type Separator = String
-  val defaultSeparator: Separator = "$(echo -e \"\\xE2\\xAE\\x80\")"
+
+  case class Segment(content: String, fg: String = "default", bg: String = "default")
+
+  case class Separator(content: String, fg: String = "default", bg: String = "default")
+
+  val defaultSeparator: Separator = Separator("$(echo -e \"\\xE2\\xAE\\x80\")")
 }

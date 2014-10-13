@@ -10,8 +10,6 @@ trait Powerline {
   def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B
 
   def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B
-
-
 }
 
 object Nil extends Powerline {
