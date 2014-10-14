@@ -5,30 +5,40 @@ import org.scalatest.FunSuite
 
 class PowerlineSuite extends FunSuite {
 
+  test("Powerline is empty on an empty powerline element") {
+    val pe: PowerlineElement = Empty()
+    assert(Powerline(pe).isEmpty)
+  }
+
+  test("Powerline is non empty on an empty powerline element") {
+    val pe: PowerlineElement = Empty().add(Segment("hello world"))
+    assert(!Powerline(pe).isEmpty)
+  }
+
   test("head of empty powerline throws exc") {
     intercept[NoSuchElementException] {
-      Empty().toPowerline.head
+      Powerline(Empty()).head
     }
   }
 
   test("tail of empty powerline throws exc") {
     intercept[NoSuchElementException] {
-      Empty().toPowerline.tail
+      Powerline(Empty()).tail
     }
   }
 
   test("head of non empty powerline ") {
-    assert(Empty().add(Segment("hello")).toPowerline.head.element._1.content == "hello")
-    assert(Empty().add(Segment("hello")).toPowerline.head.element._2 == defaultSeparator)
+    assert(Powerline(Empty().add(Segment("hello"))).head.element._1.content == "hello")
+    assert(Powerline(Empty().add(Segment("hello"))).head.element._2 == defaultSeparator)
   }
 
   test("head and tail combination of non empty powerline") {
-    assert(Empty().add(Segment("hello")).add(Segment("world")).toPowerline.tail.head.element._1.content == "world")
-    assert(Empty().add(Segment("hello")).add(Segment("world")).toPowerline.tail.head.element._2 == defaultSeparator)
+    assert(Powerline(Empty().add(Segment("hello")).add(Segment("world"))).tail.head.element._1.content == "world")
+    assert(Powerline(Empty().add(Segment("hello")).add(Segment("world"))).tail.head.element._2 == defaultSeparator)
   }
 
   test("foldLeft") {
-    val p = Empty().add(Segment("hello")).add(Segment("world")).toPowerline
+    val p = Powerline(Empty().add(Segment("hello")).add(Segment("world")))
     val s = p.foldLeft("") {
       (acc, pe) => acc + pe.element._1.content
     }
@@ -36,7 +46,7 @@ class PowerlineSuite extends FunSuite {
   }
 
   test("foldRight") {
-    val p = Empty().add(Segment("hello")).add(Segment("world")).toPowerline
+    val p = Powerline(Empty().add(Segment("hello")).add(Segment("world")))
     val s = p.foldRight("") {
       (acc, pe) => acc + pe.element._1.content
     }

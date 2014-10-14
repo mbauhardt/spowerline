@@ -7,8 +7,6 @@ trait PowerlineElement {
   def element: (Segment, Separator)
 
   def isEmpty: Boolean
-
-  def toPowerline: Powerline
 }
 
 case class Empty() extends PowerlineElement {
@@ -17,8 +15,6 @@ case class Empty() extends PowerlineElement {
   override def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
 
   override def isEmpty = true
-
-  override def toPowerline: Powerline = Nil
 }
 
 case class NonEmpty(segment: Segment, separator: Separator, next: PowerlineElement) extends PowerlineElement {
@@ -27,6 +23,4 @@ case class NonEmpty(segment: Segment, separator: Separator, next: PowerlineEleme
   override def element: (Segment, Separator) = (segment, separator)
 
   override def isEmpty = false
-
-  override def toPowerline: Powerline = NonEmptyPowerline(this, next.toPowerline)
 }

@@ -40,3 +40,12 @@ case class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) ex
   def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = f(tail.foldRight(z)(f), head)
 
 }
+
+object Powerline {
+  def apply(pe: PowerlineElement): Powerline = {
+    pe match {
+      case Empty() => Nil
+      case i: NonEmpty => NonEmptyPowerline(i, apply(i.next))
+    }
+  }
+}

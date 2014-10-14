@@ -28,14 +28,4 @@ class PowerlineElementSuite extends FunSuite {
     assert(pe.element._1.equals(Segment("hello")))
     assert(pe.element._2 == defaultSeparator)
   }
-
-  test("toPowerline is empty on an empty powerline element") {
-    val pe: PowerlineElement = Empty()
-    assert(pe.toPowerline.isEmpty)
-  }
-
-  test("retrieve a non empty powerline from a non empty powerline element ") {
-    val pe: PowerlineElement = Empty().add(Segment("hello world"))
-    assert(!pe.toPowerline.isEmpty)
-  }
 }
