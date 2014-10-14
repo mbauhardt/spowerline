@@ -9,7 +9,7 @@ trait Powerline {
 
   def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B
 
-  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B
+  def foldRight[B](z: B)(f: (PowerlineElement, B) => B): B
 }
 
 object Nil extends Powerline {
@@ -21,7 +21,7 @@ object Nil extends Powerline {
 
   def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = z
 
-  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = z
+  def foldRight[B](z: B)(f: (PowerlineElement, B) => B): B = z
 }
 
 case class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) extends Powerline {
@@ -37,8 +37,7 @@ case class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) ex
     acc
   }
 
-  def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = f(tail.foldRight(z)(f), head)
-
+  def foldRight[B](z: B)(f: (PowerlineElement, B) => B): B = f(head, tail.foldRight(z)(f))
 }
 
 object Powerline {

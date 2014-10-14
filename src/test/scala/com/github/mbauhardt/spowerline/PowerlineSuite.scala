@@ -48,7 +48,7 @@ class PowerlineSuite extends FunSuite {
   test("foldRight") {
     val p = Powerline(Empty.inc(Segment("hello")).inc(Segment("world")))
     val s = p.foldRight("") {
-      (acc, pe) => acc + pe.element._1.content
+      (pe, acc) => acc + pe.element._1.content
     }
     assert(s.equals("worldhello"))
   }
