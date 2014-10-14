@@ -9,12 +9,12 @@ trait PowerlineElement {
   def isEmpty: Boolean
 }
 
-case class Empty() extends PowerlineElement {
-  override def add(seg: Segment): PowerlineElement = NonEmpty(seg, defaultSeparator, Empty())
+object Empty extends PowerlineElement {
+  def add(seg: Segment): PowerlineElement = NonEmpty(seg, defaultSeparator, Empty)
 
-  override def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
+  def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
 
-  override def isEmpty = true
+  def isEmpty = true
 }
 
 case class NonEmpty(segment: Segment, separator: Separator, next: PowerlineElement) extends PowerlineElement {

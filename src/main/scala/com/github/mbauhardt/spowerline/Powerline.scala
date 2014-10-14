@@ -13,13 +13,13 @@ trait Powerline {
 }
 
 object Nil extends Powerline {
-  override def head: PowerlineElement = throw new NoSuchElementException("Empty powerline has no head")
+  def head: PowerlineElement = throw new NoSuchElementException("Empty powerline has no head")
 
-  override def tail: Powerline = throw new NoSuchElementException("Empty powerline has no tail")
+  def tail: Powerline = throw new NoSuchElementException("Empty powerline has no tail")
 
-  override def isEmpty: Boolean = true
+  def isEmpty: Boolean = true
 
-  override def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = z
+  def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = z
 
   def foldRight[B](z: B)(f: (B, PowerlineElement) => B): B = z
 }
@@ -44,7 +44,7 @@ case class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) ex
 object Powerline {
   def apply(pe: PowerlineElement): Powerline = {
     pe match {
-      case Empty() => Nil
+      case Empty => Nil
       case i: NonEmpty => NonEmptyPowerline(i, apply(i.next))
     }
   }
