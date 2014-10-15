@@ -24,7 +24,7 @@ object Nil extends Powerline {
   def foldRight[B](z: B)(f: (PowerlineElement, B) => B): B = z
 }
 
-case class NonEmptyPowerline(val head: PowerlineElement, val tail: Powerline) extends Powerline {
+case class Cons(val head: PowerlineElement, val tail: Powerline) extends Powerline {
   override def isEmpty: Boolean = false
 
   override def foldLeft[B](z: B)(f: (B, PowerlineElement) => B): B = {
@@ -44,7 +44,7 @@ object Powerline {
   def apply(pe: PowerlineElement): Powerline = {
     pe match {
       case Empty => Nil
-      case i: NonEmpty => NonEmptyPowerline(i, apply(i.next))
+      case i: NonEmpty => Cons(i, apply(i.next))
     }
   }
 }
