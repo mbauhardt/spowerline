@@ -10,7 +10,7 @@ trait PowerlineElement {
 }
 
 object Empty extends PowerlineElement {
-  def inc(seg: Segment): PowerlineElement = NonEmpty(seg, defaultSeparator, Empty)
+  def inc(seg: Segment): PowerlineElement = NonEmpty(seg, DefaultSeparator(), Empty)
 
   def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
 

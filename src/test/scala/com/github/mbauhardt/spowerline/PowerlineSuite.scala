@@ -29,12 +29,12 @@ class PowerlineSuite extends FunSuite {
 
   test("head of non empty powerline ") {
     assert(Powerline(Empty.inc(Segment("hello"))).head.element._1.content == "hello")
-    assert(Powerline(Empty.inc(Segment("hello"))).head.element._2 == defaultSeparator)
+    assert(Powerline(Empty.inc(Segment("hello"))).head.element._2 == DefaultSeparator())
   }
 
   test("head and tail combination of non empty powerline") {
     assert(Powerline(Empty.inc(Segment("hello")).inc(Segment("world"))).tail.head.element._1.content == "world")
-    assert(Powerline(Empty.inc(Segment("hello")).inc(Segment("world"))).tail.head.element._2 == defaultSeparator)
+    assert(Powerline(Empty.inc(Segment("hello")).inc(Segment("world"))).tail.head.element._2 == DefaultSeparator())
   }
 
   test("foldLeft") {
