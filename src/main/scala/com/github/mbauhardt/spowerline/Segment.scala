@@ -1,7 +1,7 @@
 package com.github.mbauhardt.spowerline
 
 
-case class Segment(content: String, fg: String = "default", bg: String = "default")
+case class Segment(group: String, id: String, content: String, fg: String = "default", bg: String = "default")
 
 case class Separator(content: String, fg: String = "default", bg: String = "default")
 
