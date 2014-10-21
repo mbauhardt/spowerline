@@ -10,7 +10,7 @@ trait PowerlineElement {
 }
 
 object Empty extends PowerlineElement {
-  def inc(seg: Segment): PowerlineElement = NonEmpty(seg, DefaultSeparator(), Empty)
+  def inc(seg: Segment): PowerlineElement = NonEmpty(seg, DefaultSeparator().copy(fg = seg.bg), Empty)
 
   def element: (Segment, Separator) = throw new NoSuchElementException("Empty element does not have any segment")
 
@@ -20,8 +20,8 @@ object Empty extends PowerlineElement {
 case class NonEmpty(segment: Segment, separator: Separator, next: PowerlineElement) extends PowerlineElement {
   override def inc(seg: Segment): PowerlineElement = {
     //`inc` is walking through the whole tree until `Empty` is there. So we can validate seg.id easily.
-    if(segment.group == seg.group && segment.id == seg.id) throw new IllegalArgumentException("Duplicate segment detected: " + seg)
-    NonEmpty(segment, separator, next.inc(seg))
+    if (segment.group == seg.group && segment.id == seg.id) throw new IllegalArgumentException("Duplicate segment detected: " + seg)
+    NonEmpty(segment, separator.copy(bg = seg.bg), next.inc(seg))
   }
 
   override def element: (Segment, Separator) = (segment, separator)

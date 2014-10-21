@@ -26,4 +26,26 @@ class PowerlineGeneratorSuite extends FunSuite {
     val s = pl.foldLeft("")(PowerlineGenerator.generateSegmentBackgroundColor)
     assert(s == "\nexport SPOWERLINE_SEGMENT_COMMON_DIR_BG=%{$bg[cyan]%}\nexport SPOWERLINE_SEGMENT_VCS_GIT_BG=%{$bg[blue]%}")
   }
+
+  test("generateSeparatorContent") {
+    val pe = Empty.inc(Segment("common", "dir", "hello")).inc(Segment("vcs", "git", "world"))
+    val pl = Powerline(pe)
+    val s = pl.foldLeft("")(PowerlineGenerator.generateSeparatorContent)
+    assert(s == "\nexport SPOWERLINE_SEPARATOR_COMMON_DIR_CONTENT=$(echo -e \"\\xE2\\xAE\\x80\")\nexport SPOWERLINE_SEPARATOR_VCS_GIT_CONTENT=$(echo -e \"\\xE2\\xAE\\x80\")")
+  }
+
+  test("generateSeparatorFgColor") {
+    val pe = Empty.inc(Segment("common", "dir", "hello", "red", "black")).inc(Segment("vcs", "git", "world", "blue", "white"))
+    val pl = Powerline(pe)
+    val s = pl.foldLeft("")(PowerlineGenerator.generateSeparatorForegroundColor)
+    assert(s == "\nexport SPOWERLINE_SEPARATOR_COMMON_DIR_FG=%{$fg[black]%}\nexport SPOWERLINE_SEPARATOR_VCS_GIT_FG=%{$fg[white]%}")
+  }
+
+  test("generateSeparatorBgColor") {
+    val pe = Empty.inc(Segment("common", "dir", "hello", bg = "cyan")).inc(Segment("vcs", "git", "world", bg = "blue"))
+    val pl = Powerline(pe)
+    val s = pl.foldLeft("")(PowerlineGenerator.generateSeparatorBackgroundColor)
+    assert(s == "\nexport SPOWERLINE_SEPARATOR_COMMON_DIR_BG=%{$bg[blue]%}\nexport SPOWERLINE_SEPARATOR_VCS_GIT_BG=%{$bg[default]%}")
+  }
+
 }
