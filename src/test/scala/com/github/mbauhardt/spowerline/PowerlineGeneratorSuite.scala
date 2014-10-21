@@ -48,4 +48,24 @@ class PowerlineGeneratorSuite extends FunSuite {
     assert(s == "\nexport SPOWERLINE_SEPARATOR_COMMON_DIR_BG=%{$bg[blue]%}\nexport SPOWERLINE_SEPARATOR_VCS_GIT_BG=%{$bg[default]%}")
   }
 
+  test("generatePowerline") {
+    val pe = Empty.inc(Segment("common", "dir", "hello", bg = "cyan")).inc(Segment("vcs", "git", "world", bg = "blue"))
+    val pl = Powerline(pe)
+    val s = pl.foldLeft("")(PowerlineGenerator.generatePowerline)
+    println(s)
+    assert(s == "" +
+      "$SPOWERLINE_SEGMENT_COMMON_DIR_FG" +
+      "$SPOWERLINE_SEGMENT_COMMON_DIR_BG" +
+      "$SPOWERLINE_SEGMENT_COMMON_DIR_CONTENT" +
+      "$SPOWERLINE_SEPARATOR_COMMON_DIR_FG" +
+      "$SPOWERLINE_SEPARATOR_COMMON_DIR_BG" +
+      "$SPOWERLINE_SEPARATOR_COMMON_DIR_CONTENT" +
+      "$SPOWERLINE_SEGMENT_VCS_GIT_FG" +
+      "$SPOWERLINE_SEGMENT_VCS_GIT_BG" +
+      "$SPOWERLINE_SEGMENT_VCS_GIT_CONTENT" +
+      "$SPOWERLINE_SEPARATOR_VCS_GIT_FG" +
+      "$SPOWERLINE_SEPARATOR_VCS_GIT_BG" +
+      "$SPOWERLINE_SEPARATOR_VCS_GIT_CONTENT")
+  }
+
 }

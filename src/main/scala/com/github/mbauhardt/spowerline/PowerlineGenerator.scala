@@ -62,4 +62,24 @@ object PowerlineGenerator {
     acc
   }
 
+  //powerline stuff
+  val generatePowerline: (String, PowerlineElement) => String = (s, pe) => {
+    var acc = s
+
+    val group = pe.element._1.group.toUpperCase
+    val id = pe.element._1.id.toUpperCase
+    val segPrefix = s"$$SPOWERLINE_SEGMENT_$group" + "_" + s"$id"
+    val sepPrefix = s"$$SPOWERLINE_SEPARATOR_$group" + "_" + s"$id"
+
+    val segFg = s"$segPrefix"  + "_FG"
+    val segBg = s"$segPrefix"  + "_BG"
+    val segContent = s"$segPrefix"  + "_CONTENT"
+
+    val sepFg = s"$sepPrefix"  + "_FG"
+    val sepBg = s"$sepPrefix"  + "_BG"
+    val sepContent = s"$sepPrefix"  + "_CONTENT"
+
+    acc += (s"$segFg$segBg$segContent$sepFg$sepBg$sepContent")
+    acc
+  }
 }
