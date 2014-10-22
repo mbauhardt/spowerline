@@ -79,7 +79,7 @@ object PowerlineGenerator {
     val sepBg = s"$sepPrefix"  + "_BG"
     val sepContent = s"$sepPrefix"  + "_CONTENT"
 
-    acc += (s"$segFg$segBg$segContent$sepFg$sepBg$sepContent")
+    acc += (s"[[ ! -z $segContent ]] && print $segFg$segBg$segContent$sepFg$sepBg$sepContent;")
     acc
   }
 }

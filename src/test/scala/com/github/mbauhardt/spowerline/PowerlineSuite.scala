@@ -33,12 +33,12 @@ class PowerlineSuite extends FunSuite {
   }
 
   test("head and tail combination of non empty powerline") {
-    assert(Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id", "world"))).tail.head.element._1.content == "world")
-    assert(Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id", "world"))).tail.head.element._2 == DefaultSeparator())
+    assert(Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id2", "world"))).tail.head.element._1.content == "world")
+    assert(Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id2", "world"))).tail.head.element._2 == DefaultSeparator())
   }
 
   test("foldLeft") {
-    val p = Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id", "world")))
+    val p = Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id2", "world")))
     val s = p.foldLeft("") {
       (acc, pe) => acc + pe.element._1.content
     }
@@ -46,7 +46,7 @@ class PowerlineSuite extends FunSuite {
   }
 
   test("foldRight") {
-    val p = Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id", "world")))
+    val p = Powerline(Empty.inc(Segment("group", "id", "hello")).inc(Segment("group", "id2", "world")))
     val s = p.foldRight("") {
       (pe, acc) => acc + pe.element._1.content
     }

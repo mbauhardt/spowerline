@@ -53,19 +53,20 @@ class PowerlineGeneratorSuite extends FunSuite {
     val pl = Powerline(pe)
     val s = pl.foldLeft("")(PowerlineGenerator.generatePowerline)
     println(s)
-    assert(s == "" +
+    assert(s == "[[ ! -z $SPOWERLINE_SEGMENT_COMMON_DIR_CONTENT ]] && print " +
       "$SPOWERLINE_SEGMENT_COMMON_DIR_FG" +
       "$SPOWERLINE_SEGMENT_COMMON_DIR_BG" +
       "$SPOWERLINE_SEGMENT_COMMON_DIR_CONTENT" +
       "$SPOWERLINE_SEPARATOR_COMMON_DIR_FG" +
       "$SPOWERLINE_SEPARATOR_COMMON_DIR_BG" +
-      "$SPOWERLINE_SEPARATOR_COMMON_DIR_CONTENT" +
+      "$SPOWERLINE_SEPARATOR_COMMON_DIR_CONTENT;" +
+      "[[ ! -z $SPOWERLINE_SEGMENT_VCS_GIT_CONTENT ]] && print " +
       "$SPOWERLINE_SEGMENT_VCS_GIT_FG" +
       "$SPOWERLINE_SEGMENT_VCS_GIT_BG" +
       "$SPOWERLINE_SEGMENT_VCS_GIT_CONTENT" +
       "$SPOWERLINE_SEPARATOR_VCS_GIT_FG" +
       "$SPOWERLINE_SEPARATOR_VCS_GIT_BG" +
-      "$SPOWERLINE_SEPARATOR_VCS_GIT_CONTENT")
+      "$SPOWERLINE_SEPARATOR_VCS_GIT_CONTENT;")
   }
 
 }
